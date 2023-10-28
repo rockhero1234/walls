@@ -7,7 +7,7 @@ import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.os.Environment
+
 import android.util.Log
 import android.widget.ImageButton
 import android.widget.ImageView
