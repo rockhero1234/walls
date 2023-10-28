@@ -53,50 +53,43 @@ class IndividualImg : AppCompatActivity() {
         }
     }
 
-    private fun downloadimage(imgurl:String,id:String) {
-        if(!verifyPerimssion()) {
-            return
+private fun downloadimage(imgurl: String, id: String) {
+    try {
+        val url = URL(imageUrl)
+        val connection = url.openConnection() as HttpURLConnection
+        connection.connect()
+
+        val input = connection.inputStream
+
+        val directory = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "walls")
+        if (!directory.exists()) {
+            directory.mkdirs()
         }
-        val dirpath = Environment.getExternalStorageDirectory().absolutePath + "/"+ getString(R.string.app_name) + "/"
-        val dir:File = File(dirpath)
-        val filename = id
 
-        val into = Glide.with(this).load(imgurl).into(object : CustomTarget<Drawable?>() {
-            override fun onResourceReady(
-                resource: Drawable,
-                transition: Transition<in Drawable?>?
-            ) {
-                val bitmap = resource.toBitmap()
-                SaveImage(bitmap,dir,filename)
-            }
+        val outputFile = File(directory, imageName)
 
-            override fun onLoadCleared(placeholder: Drawable?) {
+        val output = FileOutputStream(outputFile)
 
-            }
+        val data = ByteArray(4096)
+        var count: Int
+        while (input.read(data).also { count = it } != -1) {
+            output.write(data, 0, count)
+        }
 
-        })
+        output.flush()
+        output.close()
+        input.close()
+
+        // Notify the user that the download was successful.
+        Toast.makeText(context, "Image downloaded successfully", Toast.LENGTH_SHORT).show()
+    } catch (e: Exception) {
+        e.printStackTrace()
+        // Handle any errors that may occur during the download process.
+        Toast.makeText(context, "Image download failed", Toast.LENGTH_SHORT).show()
     }
-    private fun SaveImage(resource:Bitmap, dir:File, filename:String) {
-        var successdircreated = false
-        if(!dir.exists()) {
-            successdircreated = dir.mkdir()
-            Log.e("failed", "directory created$successdircreated")
-        }
-        if(successdircreated) {
-            val imagefile = File(dir, filename)
-            val savedimagepath = imagefile.absoluteFile
-            try {
-                val fout = FileOutputStream(imagefile)
-                resource.compress(Bitmap.CompressFormat.JPEG, 100, fout)
-                fout.close()
-                Toast.makeText(this,"succesfully downloaded to ${savedimagepath}",Toast.LENGTH_SHORT).show()
-            } catch (e: Exception) {
-                Log.e("failed", e.toString())
-            }
-        }else {
-            Log.i("fail","failed")
-        }
-    }
+}
+
+    
     private fun verifyPerimssion():Boolean{
         val permissionexternalmemory = ActivityCompat.checkSelfPermission(
             this,
