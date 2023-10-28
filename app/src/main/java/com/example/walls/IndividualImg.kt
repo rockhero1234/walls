@@ -20,6 +20,10 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import java.io.File
 import java.io.FileOutputStream
+import android.os.Environment
+import java.io.InputStream
+import java.net.HttpURLConnection
+import java.net.URL
 
 
 @Suppress("DEPRECATION")
